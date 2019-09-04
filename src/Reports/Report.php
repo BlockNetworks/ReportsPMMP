@@ -1,6 +1,6 @@
 <?php
 declare(strict_types=1);
-namespace Eren5960\Bildir;
+namespace Reports;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\plugin\PluginBase;
@@ -11,22 +11,22 @@ class Main extends PluginBase implements L{
     /** @var Config */
     private $hak;
     /** @var PREFIX */
-    public const PREFIX = "§7[§4BILDIR§7]§f ";
+    public const PREFIX = "§7[§4REPORT§7]§f ";
     /** @var Reports */
     private $r;
     
     public function oJ(PlayerJoinEvent $e)
     {
         $oyuncu = strtolower($e->getPlayer()->getName());
-        $this->hak = new Config($this->getDataFolder()."data/".strtolower($oyuncu).".yml", Config::YAML);
-        if(!$this->hak->get($oyuncu)){
-         $this->hak->set($oyuncu, 0);
+        $this->hak = new Config($this->getDataFolder()."data/".strtolower($player).".yml", Config::YAML);
+        if(!$this->hak->get($player)){
+         $this->hak->set($player, 0);
          $this->hak->save();
          return true;
      }
-        if ($this->hak->get($oyuncu."-time")) {
-            if($this->hak->get($oyuncu."-time") < time()){
-             $this->hak->remove($oyuncu."-time");
+        if ($this->hak->get($player."-time")) {
+            if($this->hak->get($player."-time") < time()){
+             $this->hak->remove($player."-time");
              $this->hak->save();
              return true;
           }  
@@ -41,24 +41,24 @@ class Main extends PluginBase implements L{
     }
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool
     {
-        if($command->getName() == "bildir"){
+        if($command->getName() == "report"){
             if(isset($args[0]) and isset($args[1])){
                 $oyuncu = strtolower($sender->getName());
-                $this->hak = new Config($this->getDataFolder()."data/".strtolower($oyuncu).".yml", Config::YAML);
+                $this->hak = new Config($this->getDataFolder()."data/".strtolower($player).".yml", Config::YAML);
                 if($this->hak->get($oyuncu) < 5){
                 $this->hak->set($oyuncu, $this->hak->get($oyuncu)+1);
                 $this->hak->set($oyuncu."-time", strtotime('+1 day'));
                 $this->hak->save();
-                $this->r = new Config($this->getDataFolder()."reports/".strtolower($oyuncu).".yml", Config::YAML);
+                $this->r = new Config($this->getDataFolder()."reports/".strtolower($player).".yml", Config::YAML);
                 $ilk = explode(":", $args[1]);
                 $son = implode(" ", $ilk);
                 $this->r->set(strtolower($args[0]), $son);
                 $this->r->save();
-                $sender->sendMessage(self::PREFIX."§bBildirdiğiniz için teşekkür ederiz!");
-                $sender->sendMessage(self::PREFIX."§dYetkililer tarafından incelenecektir!");
+                $sender->sendMessage(self::PREFIX."§bReport Thank you for reporting");
+                $sender->sendMessage(self::PREFIX."§dTo be reviewed by the authorities!");
                 return true;
                 }else{
-                $sender->sendMessage(self::PREFIX."§4 Günlük sadece 5 kişi bildirebilirsiniz.");
+                $sender->sendMessage(self::PREFIX."§4 You can report only 5 people daily.");
                 return false;
                 }
             }else{
@@ -70,8 +70,8 @@ class Main extends PluginBase implements L{
     }
     private function yardim($s){
         $s->sendMessage(self::PREFIX);
-        $s->sendMessage("§a/bildir <oyuncu> <sebep> : Oyuncuyu bildirmenize yarar!");
-        $s->sendMessage("§4DİKKAT: Sebep yazarken boşluk yerine '§a:§4' kullanın!\n§aÖRNEK: §b/bildir Eren5960 çok:küfür:ediyor");
+        $s->sendMessage("§a/report <oyuncu> <sebep> : We will let the player know!");
+        $s->sendMessage("§4ATTENTION: Use '§a: §4' instead of space when writing the reason! \ §b / report");
         $s->sendMessage(self::PREFIX);
         return true;
     }
