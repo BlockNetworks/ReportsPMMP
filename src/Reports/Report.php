@@ -1,13 +1,18 @@
 <?php
+
 declare(strict_types=1);
+
 namespace Reports;
+
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\plugin\PluginBase;
 use pocketmine\utils\Config;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\Listener as L;
+
 class Main extends PluginBase implements L{
+    
     /** @var Config */
     private $hak;
     /** @var PREFIX */
@@ -15,8 +20,7 @@ class Main extends PluginBase implements L{
     /** @var Reports */
     private $r;
     
-    public function oJ(PlayerJoinEvent $e)
-    {
+    public function oJ(PlayerJoinEvent $e) {
         $oyuncu = strtolower($e->getPlayer()->getName());
         $this->hak = new Config($this->getDataFolder()."data/".strtolower($player).".yml", Config::YAML);
         if(!$this->hak->get($player)){
@@ -32,15 +36,14 @@ class Main extends PluginBase implements L{
           }  
         }
     }
-    public function onEnable()
-    {
+    
+    public function onEnable() {
         $this->getServer()->getPluginManager()->registerEvents($this, $this);
         @mkdir($this->getDataFolder());
         @mkdir($this->getDataFolder()."data");
         @mkdir($this->getDataFolder()."reports");
     }
-    public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool
-    {
+    public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool {
         if($command->getName() == "report"){
             if(isset($args[0]) and isset($args[1])){
                 $oyuncu = strtolower($sender->getName());
